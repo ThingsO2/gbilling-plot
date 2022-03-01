@@ -1,15 +1,14 @@
 ---
 name: Deploy
 on:
-  push:
-    branches:
-      - main
-      - master
+  pull_request_review:
+    types: [submitted]
 
 jobs:
   staging:
     name: Build
     runs-on: ubuntu-20.04
+    if: github.event.review.state == 'approved'
     steps:
       - name: Checkout
         uses: actions/checkout@v2

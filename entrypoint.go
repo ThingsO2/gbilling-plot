@@ -21,6 +21,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"fmt"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/future-architect/gbilling-plot/graph"
@@ -29,6 +30,7 @@ import (
 )
 
 const period = 30
+const upperLimit = 5000
 
 func GraphedBilling(ctx context.Context, m *pubsub.Message) error {
 	log.Println("start GraphedBilling")
@@ -63,6 +65,17 @@ func GraphedBilling(ctx context.Context, m *pubsub.Message) error {
 	}
 
 	notifier := notify.NewSlackNotifier(slackToken, slackChannel)
+
+	charts, _ := graph.GetChartValues(costs)
+	total := charts[len(charts)-1].Value
+	if total > upperLimit {
+		log.Println("high cost")
+		msg := fmt.Sprintf("<!channel> you must to review current invoice which is higher than %d€: %d", upperLimit, int(total))
+		if err := notifier.PostMessage(ctx, msg); err != nil {
+			log.Println("Slack post is failed")
+			log.Fatal(err)
+		}
+	}
 	if err := notifier.PostImage(ctx, bytes.NewBuffer(plotBytes)); err != nil {
 		log.Println("Slack post is failed")
 		return err
