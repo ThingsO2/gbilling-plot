@@ -4,7 +4,7 @@ on:
   pull_request_review:
     types: [submitted]
 env:
-  MAX_total: 5000
+  MAX_total: 100 #5000
   MAX_cicd_tools: 450
   MAX_common_resources: 300
   MAX_data_storage: 10
@@ -12,7 +12,8 @@ env:
   MAX_legacy: 250
   MAX_mvp_ai: 150
   MAX_mvp_dev: 1000
-  MAX_mvp_pro: 2000
+  MAX_mvp_pro: 10 #2000
+
 jobs:
   staging:
     name: Build
@@ -43,5 +44,5 @@ jobs:
           region: 'europe-west1'
           event_trigger_resource: 'projects/monom-common-resources/topics/billing-daily-report'
           event_trigger_type: 'google.pubsub.topic.publish'
-          env_vars: TABLE_NAME=${{ secrets.TABLE_NAME }},SLACK_API_TOKEN=${{ secrets.SLACK_API_TOKEN }},SLACK_CHANNEL=${{ secrets.SLACK_CHANNEL }},GCP_PROJECT=${{ secrets.GCP_PROJECT }}
+          env_vars: TABLE_NAME=${{ secrets.TABLE_NAME }},SLACK_API_TOKEN=${{ secrets.SLACK_API_TOKEN }},SLACK_CHANNEL=${{ secrets.SLACK_CHANNEL }},GCP_PROJECT=${{ secrets.GCP_PROJECT }},MAX_total=${{ env.MAX_total }},MAX_cicd_tools=${{ env.MAX_cicd_tools }},MAX_common_resources=${{ env.MAX_common_resources }},MAX_data_storage=${{ env.MAX_data_storage }},MAX_infra_test=${{ env.MAX_infra_test }},MAX_legacy=${{ env.MAX_legacy }},MAX_mvp_ai=${{ env.MAX_mvp_ai }},MAX_mvp_dev=${{ env.MAX_mvp_dev }},MAX_mvp_pro=${{ env.MAX_mvp_pro }}
  
