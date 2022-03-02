@@ -20,7 +20,7 @@ import (
 	"context"
 	"flag"
 	//"io/ioutil"
-	"fmt"
+	//"fmt"
 	"log"
 	"os"
 
@@ -76,16 +76,8 @@ func main() {
 	charts, _ := graph.GetChartValues(costs)
 
 	notifier := notify.NewSlackNotifier(slackToken, slackChannel)
-	total := charts[len(charts)-1].Value
-	if total > 50000 {
-		log.Println("high cost")
-		msg := fmt.Sprintf("<!channel> you must to review current invoice which is higher than %d€: %d", 5000, int(total))
-		if err := notifier.PostMessage(ctx, msg); err != nil {
-			log.Println("Slack post is failed")
-			log.Fatal(err)
-		}
-	}
-	log.Println()
+
+	notifier.NotifyByProject(ctx, charts)
 	//plotBytes, err := graph.Draw(costs)
 	//if err != nil {
 	//	log.Println("graph draw is failed")

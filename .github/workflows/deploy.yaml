@@ -3,7 +3,16 @@ name: Deploy
 on:
   pull_request_review:
     types: [submitted]
-
+env:
+  MAX_total: 5000
+  MAX_cicd_tools: 450
+  MAX_common_resources: 300
+  MAX_data_storage: 10
+  MAX_infra_test: 100
+  MAX_legacy: 250
+  MAX_mvp_ai: 150
+  MAX_mvp_dev: 1000
+  MAX_mvp_pro: 2000
 jobs:
   staging:
     name: Build

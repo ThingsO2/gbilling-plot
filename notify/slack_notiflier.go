@@ -18,8 +18,14 @@ package notify
 import (
 	"context"
 	"io"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+	"log"
 
 	"github.com/slack-go/slack"
+	chart "github.com/wcharczuk/go-chart/v2"
 )
 
 type slackNotifier struct {
@@ -50,4 +56,28 @@ func (n* slackNotifier) PostMessage(ctx context.Context, msg string) error {
 		slack.MsgOptionText(msg, false),
 	)
 	return err
+}
+
+func (n* slackNotifier) NotifyByProject(ctx context.Context, values []chart.Value) error {
+	for _, v := range values {
+		env := "MAX_" + strings.Replace(v.Label, "-", "_", -1)
+		threshold, exist := os.LookupEnv(env)
+		if !exist {
+			log.Printf("%s is not defined", env)
+			continue
+		}
+		thresholdInt, _ := strconv.Atoi(threshold)
+		value := int(v.Value)
+		if value > thresholdInt {
+			msg := fmt.Sprintf("<!channel> %s %d is over %d", v.Label, value, thresholdInt)
+			if v.Label == "total" {
+				msg = fmt.Sprintf("<!channel> you must to review current invoice which is higher than %d€: %d", value, thresholdInt)
+			}
+			err := n.PostMessage(ctx, msg)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
