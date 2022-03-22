@@ -10,9 +10,9 @@ env:
   MAX_data_storage: 10
   MAX_infra_test: 100
   MAX_legacy: 250
-  MAX_mvp_ai: 150
+  MAX_mvp_ai: 300
   MAX_mvp_dev: 1000
-  MAX_mvp_pro: 2000
+  MAX_mvp_pro: 4000
 
 jobs:
   staging:
